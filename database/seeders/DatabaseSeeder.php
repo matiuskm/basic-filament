@@ -21,8 +21,19 @@ class DatabaseSeeder extends Seeder
             'email' => 'admin@admin.com',
         ]);
 
+        \App\Models\Hero::factory()->create([
+            'title' => "We are a Arunika Digital serve#Online Marketing|Web Design|Mobile Apps|Brand Identity|Social Content",
+            'subtitle' => 'We would direct you to limitless ideas and move your brand into a global landscape.',
+            'link1' => 'http://basic-filament.test/#portfolio',
+            'link2' => 'https://hianime.to/home',
+            'image' => 'https://picsum.photos/400/300',
+            'is_active' => true,
+        ]);
+
         $this->call([
             GuestBookSeeder::class,
+            HeroSeeder::class,
+            ServiceSeeder::class,
         ]);
     }
 }
