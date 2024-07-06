@@ -6,6 +6,7 @@ use App\Filament\Resources\HeroResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Facades\Storage;
 
 class EditHero extends EditRecord
 {
@@ -14,7 +15,13 @@ class EditHero extends EditRecord
     protected function getHeaderActions(): array
     {
         return [
-            Actions\DeleteAction::make(),
+            Actions\DeleteAction::make()->after(
+                function (\App\Models\Hero $record) {
+                    if ($record->image) {
+                        Storage::disk('public')->delete($record->image);
+                    }
+                }
+            ),
         ];
     }
 

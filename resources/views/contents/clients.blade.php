@@ -3,52 +3,19 @@
       <div class="w-full px-4">
         <!-- slider client -->
         <div id="post-carousel" class="navslider-hover splide post-carousel">
-      <div class="splide__track">
-        <div class="splide__list grayscale">
-          <div class="splide__slide">
-                      <div class="w-full px-4 text-center pb-3">
-                        <a href="#" target="_blank">
-                          <img class="grayscale mx-auto opacity-80 hover:opacity-100 max-w-full h-auto" src="src/img/dummy/img1.png" alt="Image Description">
-                        </a>
-                      </div>
-                    </div>
+            <div class="splide__track">
+                <div class="splide__list grayscale">
+                    @foreach ($clients as $client)
                     <div class="splide__slide">
-                      <div class="w-full px-4 text-center pb-3">
-                        <a href="#" target="_blank">
-                          <img class="grayscale mx-auto opacity-80 hover:opacity-100 max-w-full h-auto" src="src/img/dummy/img2.png" alt="Image Description">
-                        </a>
-                      </div>
+                        <div class="w-full px-4 text-center pb-3">
+                            <a href="{{$client->url}}" target="_blank">
+                                <img class="grayscale mx-auto opacity-80 hover:opacity-100 max-w-full h-auto" src="{{$client->image}}" alt="{{$client->name}}">
+                            </a>
+                        </div>
                     </div>
-                    <div class="splide__slide">
-                      <div class="w-full px-4 text-center pb-3">
-                        <a href="#" target="_blank">
-                          <img class="grayscale mx-auto opacity-80 hover:opacity-100 max-w-full h-auto" src="src/img/dummy/img3.png" alt="Image Description">
-                        </a>
-                      </div>
-                    </div>
-                    <div class="splide__slide">
-                      <div class="w-full px-4 text-center pb-3">
-                        <a href="#" target="_blank">
-                          <img class="grayscale mx-auto opacity-80 hover:opacity-100 max-w-full h-auto" src="src/img/dummy/img4.png" alt="Image Description">
-                        </a>
-                      </div>
-                    </div>
-                    <div class="splide__slide">
-                      <div class="w-full px-4 text-center pb-3">
-                        <a href="#" target="_blank">
-                          <img class="grayscale mx-auto opacity-80 hover:opacity-100 max-w-full h-auto" src="src/img/dummy/img5.png" alt="Image Description">
-                        </a>
-                      </div>
-                    </div>
-                    <div class="splide__slide">
-                      <div class="w-full px-4 text-center pb-3">
-                        <a href="#" target="_blank">
-                          <img class="grayscale mx-auto opacity-80 hover:opacity-100 max-w-full h-auto" src="src/img/dummy/img6.png" alt="Image Description">
-                        </a>
-                      </div>
-                    </div>
-                  </div>
+                    @endforeach
                 </div>
+            </div>
         </div><!-- end slider client -->
       </div>
     </div>

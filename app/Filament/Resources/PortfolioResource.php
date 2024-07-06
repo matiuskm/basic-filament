@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ServiceResource\Pages;
-use App\Filament\Resources\ServiceResource\RelationManagers;
-use App\Models\Service;
+use App\Filament\Resources\PortfolioResource\Pages;
+use App\Filament\Resources\PortfolioResource\RelationManagers;
+use App\Models\Portfolio;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,31 +15,29 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
 
-class ServiceResource extends Resource
+class PortfolioResource extends Resource
 {
-    protected static ?string $model = Service::class;
+    protected static ?string $model = Portfolio::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Landing Page Management';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 2;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
                 Forms\Components\TextInput::make('title')
-                    ->required()
-                    ->placeholder('Enter the title of the service'),
-                Forms\Components\RichEditor::make('description')
-                    ->required()
-                    ->placeholder('Enter the description of the service'),
-                Forms\Components\FileUpload::make('icon')
+                    ->required(),
+                Forms\Components\Textarea::make('description')
+                    ->required(),
+                Forms\Components\FileUpload::make('image')
                     ->image()
-                    ->imageCropAspectRatio('1:1')
-                    ->directory('services')
-                    ->rules('image', 'mimes:jpeg,png,webp', 'max:150'),
+                    ->directory('portfolios')
+                    ->imageCropAspectRatio('4:3')
+                    ->rules('image', 'mimes:jpeg,png,webp', 'max:300'),
             ])->columns(1);
     }
 
@@ -47,25 +45,24 @@ class ServiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('icon'),
+                Tables\Columns\ImageColumn::make('image'),
                 Tables\Columns\TextColumn::make('title')
                     ->searchable()
                     ->sortable(),
                 Tables\Columns\TextColumn::make('description')
                     ->searchable()
-                    ->sortable()
                     ->wrap(),
             ])
+            ->defaultSort('updated_at', 'desc')
             ->filters([
                 //
             ])
-            ->defaultSort('updated_at', 'desc')
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()->after(
-                    function (\App\Models\Service $record) {
-                        if ($record->icon) {
-                            Storage::disk('public')->delete($record->icon);
+                    function (\App\Models\Portfolio $record) {
+                        if ($record->image) {
+                            Storage::disk('public')->delete($record->image);
                         }
                     }
                 ),
@@ -75,8 +72,8 @@ class ServiceResource extends Resource
                     Tables\Actions\DeleteBulkAction::make()->after(
                         function (Collection $collection) {
                             foreach ($collection as $record) {
-                                if ($record->icon) {
-                                    Storage::disk('public')->delete($record->icon);
+                                if ($record->image) {
+                                    Storage::disk('public')->delete($record->image);
                                 }
                             }
                         }
@@ -95,9 +92,9 @@ class ServiceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListServices::route('/'),
-            'create' => Pages\CreateService::route('/create'),
-            'edit' => Pages\EditService::route('/{record}/edit'),
+            'index' => Pages\ListPortfolios::route('/'),
+            'create' => Pages\CreatePortfolio::route('/create'),
+            'edit' => Pages\EditPortfolio::route('/{record}/edit'),
         ];
     }
 }

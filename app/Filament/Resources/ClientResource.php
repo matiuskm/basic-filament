@@ -2,9 +2,9 @@
 
 namespace App\Filament\Resources;
 
-use App\Filament\Resources\ServiceResource\Pages;
-use App\Filament\Resources\ServiceResource\RelationManagers;
-use App\Models\Service;
+use App\Filament\Resources\ClientResource\Pages;
+use App\Filament\Resources\ClientResource\RelationManagers;
+use App\Models\Client;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -15,30 +15,31 @@ use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
 use Illuminate\Support\Facades\Storage;
 
-class ServiceResource extends Resource
+class ClientResource extends Resource
 {
-    protected static ?string $model = Service::class;
+    protected static ?string $model = Client::class;
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
     protected static ?string $navigationGroup = 'Landing Page Management';
 
-    protected static ?int $navigationSort = 1;
+    protected static ?int $navigationSort = 3;
 
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Forms\Components\TextInput::make('title')
+                Forms\Components\TextInput::make('name')
                     ->required()
-                    ->placeholder('Enter the title of the service'),
-                Forms\Components\RichEditor::make('description')
+                    ->rules('max:50'),
+                Forms\Components\TextInput::make('url')
                     ->required()
-                    ->placeholder('Enter the description of the service'),
-                Forms\Components\FileUpload::make('icon')
+                    ->prefixIcon('heroicon-o-link')
+                    ->rules('max:255'),
+                Forms\Components\FileUpload::make('image')
                     ->image()
-                    ->imageCropAspectRatio('1:1')
-                    ->directory('services')
+                    ->imageCropAspectRatio('2:1')
+                    ->required()
                     ->rules('image', 'mimes:jpeg,png,webp', 'max:150'),
             ])->columns(1);
     }
@@ -47,36 +48,34 @@ class ServiceResource extends Resource
     {
         return $table
             ->columns([
-                Tables\Columns\ImageColumn::make('icon'),
-                Tables\Columns\TextColumn::make('title')
-                    ->searchable()
-                    ->sortable(),
-                Tables\Columns\TextColumn::make('description')
-                    ->searchable()
+                Tables\Columns\ImageColumn::make('image')
+                    ->label('Logo'),
+                Tables\Columns\TextColumn::make('name')
                     ->sortable()
-                    ->wrap(),
+                    ->searchable(),
+                Tables\Columns\TextColumn::make('url')
+                    ->label('Website'),
             ])
             ->filters([
                 //
             ])
-            ->defaultSort('updated_at', 'desc')
             ->actions([
                 Tables\Actions\EditAction::make(),
                 Tables\Actions\DeleteAction::make()->after(
-                    function (\App\Models\Service $record) {
-                        if ($record->icon) {
-                            Storage::disk('public')->delete($record->icon);
+                    function (\App\Models\Portfolio $record) {
+                        if ($record->image) {
+                            Storage::disk('public')->delete($record->image);
                         }
                     }
-                ),
+                )
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
                     Tables\Actions\DeleteBulkAction::make()->after(
                         function (Collection $collection) {
                             foreach ($collection as $record) {
-                                if ($record->icon) {
-                                    Storage::disk('public')->delete($record->icon);
+                                if ($record->image) {
+                                    Storage::disk('public')->delete($record->image);
                                 }
                             }
                         }
@@ -95,9 +94,9 @@ class ServiceResource extends Resource
     public static function getPages(): array
     {
         return [
-            'index' => Pages\ListServices::route('/'),
-            'create' => Pages\CreateService::route('/create'),
-            'edit' => Pages\EditService::route('/{record}/edit'),
+            'index' => Pages\ListClients::route('/'),
+            'create' => Pages\CreateClient::route('/create'),
+            'edit' => Pages\EditClient::route('/{record}/edit'),
         ];
     }
 }

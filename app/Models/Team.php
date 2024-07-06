@@ -6,17 +6,18 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Storage;
 
-class Hero extends Model
+class Team extends Model
 {
     use HasFactory;
 
     protected $fillable = [
+        'name',
+        'position',
         'image',
-        'title',
-        'subtitle',
-        'link1',
-        'link2',
-        'is_active',
+        'twitter',
+        'facebook',
+        'linkedin',
+        'instagram',
     ];
 
     protected static function boot()

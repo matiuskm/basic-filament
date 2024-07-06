@@ -17,7 +17,9 @@ use Filament\Tables\Columns\ImageColumn;
 use Filament\Tables\Filters\Filter;
 use Filament\Tables\Table;
 use Illuminate\Database\Eloquent\Builder;
+use Illuminate\Database\Eloquent\Collection;
 use Illuminate\Database\Eloquent\SoftDeletingScope;
+use Illuminate\Support\Facades\Storage;
 
 class HeroResource extends Resource
 {
@@ -25,11 +27,15 @@ class HeroResource extends Resource
 
     protected static ?string $navigationIcon = 'heroicon-o-rectangle-stack';
 
+    protected static ?string $navigationGroup = 'Landing Page Management';
+
+    protected static ?int $navigationSort = 0;
+
     public static function form(Form $form): Form
     {
         return $form
             ->schema([
-                Grid::make(3)
+                Forms\Components\Group::make()
                     ->schema([
                         Section::make('Hero Content')
                             ->schema([
@@ -47,18 +53,25 @@ class HeroResource extends Resource
                                 Forms\Components\TextInput::make('link2')
                                     ->placeholder('https://example.com')
                                     ->prefixIcon('heroicon-o-link'),
+
+                            ])->columns(1),
+                    ]),
+                Forms\Components\Group::make()
+                    ->schema([
+                        Section::make('Hero Attributes')
+                            ->schema([
+                                FileUpload::make('image')
+                                    ->image()
+                                    ->required()
+                                    ->rules('image', 'mimes:jpeg,png,webp', 'max:1024'),
                                 Forms\Components\Toggle::make('is_active')
                                     ->label('Active')
                                     ->onIcon('heroicon-s-check-circle')
                                     ->offIcon('heroicon-s-x-circle')
                                     ->default(false),
 
-                            ])->columnSpan(2),
-                        FileUpload::make('image')
-                            ->image()
-                            ->required()
-                            ->rules('image', 'mimes:jpeg,png,webp', 'max:1024'),
-                    ]),
+                            ]),
+                    ])
             ]);
     }
 
@@ -103,11 +116,25 @@ class HeroResource extends Resource
             ])
             ->actions([
                 Tables\Actions\EditAction::make(),
-                Tables\Actions\DeleteAction::make(),
+                Tables\Actions\DeleteAction::make()->after(
+                    function (\App\Models\Hero $record) {
+                        if ($record->image) {
+                            Storage::disk('public')->delete($record->image);
+                        }
+                    }
+                ),
             ])
             ->bulkActions([
                 Tables\Actions\BulkActionGroup::make([
-                    Tables\Actions\DeleteBulkAction::make(),
+                    Tables\Actions\DeleteBulkAction::make()->after(
+                        function (Collection $collection) {
+                            foreach ($collection as $record) {
+                                if ($record->image) {
+                                    Storage::disk('public')->delete($record->image);
+                                }
+                            }
+                        }
+                    ),
                 ]),
             ]);
     }

@@ -18,6 +18,15 @@ class LandingPageController extends Controller
         // get all services
         $services = \App\Models\Service::all();
 
-        return view('welcome', compact('hero', 'mainTitle', 'animationTitle', 'services'));
+        // get all portfolios
+        $portfolios = \App\Models\Portfolio::all();
+
+        // get all clients
+        $clients = \App\Models\Client::all();
+
+        // get all teams
+        $teams = \App\Models\Team::all();
+
+        return view('welcome', compact('hero', 'mainTitle', 'animationTitle', 'services', 'portfolios', 'clients', 'teams'));
     }
 }

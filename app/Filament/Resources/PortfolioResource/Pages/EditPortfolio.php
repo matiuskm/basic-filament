@@ -1,23 +1,23 @@
 <?php
 
-namespace App\Filament\Resources\ServiceResource\Pages;
+namespace App\Filament\Resources\PortfolioResource\Pages;
 
-use App\Filament\Resources\ServiceResource;
+use App\Filament\Resources\PortfolioResource;
 use Filament\Actions;
 use Filament\Resources\Pages\EditRecord;
 use Illuminate\Support\Facades\Storage;
 
-class EditService extends EditRecord
+class EditPortfolio extends EditRecord
 {
-    protected static string $resource = ServiceResource::class;
+    protected static string $resource = PortfolioResource::class;
 
     protected function getHeaderActions(): array
     {
         return [
             Actions\DeleteAction::make()->after(
-                function (\App\Models\Service $record) {
-                    if ($record->icon) {
-                        Storage::disk('public')->delete($record->icon);
+                function (\App\Models\Portfolio $record) {
+                    if ($record->image) {
+                        Storage::disk('public')->delete($record->image);
                     }
                 }
             ),
